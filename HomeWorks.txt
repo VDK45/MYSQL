@@ -196,3 +196,4 @@ SELECT ROUND(exp(SUM(LN(id))), 0) AS factorial FROM catalogs;
 --Вариант
 SELECT ROUND(exp(SUM(log(id))), 0) AS factorial FROM catalogs;
 
+
