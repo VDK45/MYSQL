@@ -112,7 +112,11 @@ ALTER TABLE likes
   ADD CONSTRAINT like_target_user_id_fk
     FOREIGN KEY (target_id) REFERENCES media(id)
     	ON DELETE CASCADE;  
-    
+		
+-- УДАЛЕНИЕ ВНЕШНЕГО КЛЮЧА like_target_user_id_fk
+ALTER TABLE `likes` 
+    DROP  FOREIGN KEY like_target_user_id_fk ;
+   
 
     
 DESC media ;     
