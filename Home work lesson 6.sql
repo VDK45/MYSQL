@@ -167,7 +167,6 @@ FROM `profiles`
 ORDER BY (YEAR(CURRENT_DATE)-YEAR(`birthday`))-(RIGHT(CURRENT_DATE,5)<RIGHT(`birthday`,5)) 
 LIMIT 10;
 		
-	
 
 
 
