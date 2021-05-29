@@ -1,13 +1,35 @@
 -- Представление Кто кому сообщение отправил
 DROP VIEW IF EXISTS messages_from;
-CREATE OR REPLACE VIEW  messages_from  AS SELECT  messages.id, messages.from_user_id, users.name AS from_name,  messages.to_user_id,  
-		(SELECT users.name FROM users WHERE users.id = messages.to_user_id) AS to_name
-		FROM messages JOIN users ON messages.from_user_id = users.id  ORDER BY messages.id ;
+CREATE OR REPLACE VIEW  messages_from  AS 
+	SELECT  
+	messages.id, 
+	messages.from_user_id, 
+	users.name AS from_name,  
+	messages.to_user_id,  
+	(SELECT users.name FROM users WHERE users.id = messages.to_user_id) AS to_name
+		FROM messages 
+			JOIN users 
+				ON messages.from_user_id = users.id  
+		ORDER BY messages.id ;
+
+CREATE OR REPLACE VIEW messages_from AS
+	SELECT
+	messages.id,
+	messages.from_user_id,
+	users_from.name AS from_name,
+	messages.to_user_id,
+	users_to.name AS to_name
+	FROM messages
+		JOIN users AS users_from
+			ON messages.from_user_id = users_from.id
+		JOIN users AS users_to
+			ON messages.to_user_id = users_to.id
+	ORDER BY messages.id;
+
 
 SELECT * FROM  messages_from;
 SELECT * FROM  messages;
 SELECT * FROM  users;
-
 
 -- Представление у кого какие игры за сколько покупал
 DROP VIEW IF EXISTS users_games_cost;
@@ -138,8 +160,23 @@ INSERT INTO `friendship` (`user_id`, `friend_id`, `friendship_status_id`, `confi
  	WINDOW w_u_id AS (PARTITION BY  f.user_id )
  	ORDER BY total_friends DESC ;
  
+ SELECT DISTINCT 
+ 	friendship.user_id,
+ 	user_name.name  AS name,
+ 	COUNT(friendship.friend_id) OVER  (PARTITION BY  friendship.user_id ) AS total_friends,
+ 	friendship.friend_id ,
+ 	friend_name.name AS  name_friend,
+ 	(YEAR(CURRENT_DATE)-YEAR(friendship.confirmed_at))  AS years_friend
+ 	FROM  friendship
+ 		JOIN users AS user_name
+ 			ON friendship.user_id = user_name.id AND friendship.friendship_status_id = 3
+ 		JOIN users AS friend_name
+ 			ON friendship.friend_id = friend_name.id AND friendship.friendship_status_id = 3
+ 	ORDER BY total_friends DESC ;
+ 
 SELECT * FROM friendship f ;
 SELECT * FROM users u ;
+
 
 
 -- Transaction
